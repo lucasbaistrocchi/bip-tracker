@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BIP Tracker — Life University</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { background:#06140A; margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+
+  /* ── Minimal utility CSS (only the classes this app actually uses) ── */
+  .flex{display:flex} .flex-col{flex-direction:column} .flex-1{flex:1 1 0%} .shrink-0{flex-shrink:0}
+  .items-center{align-items:center} .items-start{align-items:flex-start}
+  .justify-center{justify-content:center} .justify-between{justify-content:space-between}
+  .grid{display:grid}
+  .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .gap-1{gap:.25rem} .gap-1\.5{gap:.375rem} .gap-2{gap:.5rem} .gap-3{gap:.75rem} .gap-4{gap:1rem}
+  .space-y-1>*+*{margin-top:.25rem} .space-y-2>*+*{margin-top:.5rem} .space-y-3>*+*{margin-top:.75rem}
+  .w-full{width:100%} .w-5{width:1.25rem} .w-11{width:2.75rem} .w-12{width:3rem}
+  .h-11{height:2.75rem} .h-2{height:.5rem} .h-full{height:100%} .h-px{height:1px}
+  .min-h-screen{min-height:100vh} .max-w-lg{max-width:32rem} .mx-auto{margin-left:auto;margin-right:auto}
+  .rounded-full{border-radius:9999px} .rounded-lg{border-radius:.5rem} .rounded-xl{border-radius:.75rem} .rounded-2xl{border-radius:1rem}
+  .overflow-hidden{overflow:hidden}
+  .p-2{padding:.5rem} .p-3{padding:.75rem} .p-4{padding:1rem} .p-5{padding:1.25rem}
+  .px-0\.5{padding-left:.125rem;padding-right:.125rem} .px-1{padding-left:.25rem;padding-right:.25rem}
+  .px-3{padding-left:.75rem;padding-right:.75rem} .px-4{padding-left:1rem;padding-right:1rem} .px-5{padding-left:1.25rem;padding-right:1.25rem}
+  .py-1{padding-top:.25rem;padding-bottom:.25rem} .py-1\.5{padding-top:.375rem;padding-bottom:.375rem}
+  .py-2{padding-top:.5rem;padding-bottom:.5rem} .py-2\.5{padding-top:.625rem;padding-bottom:.625rem}
+  .py-3{padding-top:.75rem;padding-bottom:.75rem} .py-4{padding-top:1rem;padding-bottom:1rem}
+  .py-6{padding-top:1.5rem;padding-bottom:1.5rem} .py-10{padding-top:2.5rem;padding-bottom:2.5rem}
+  .pt-2{padding-top:.5rem} .pt-3{padding-top:.75rem} .pt-5{padding-top:1.25rem} .pt-8{padding-top:2rem}
+  .pb-2{padding-bottom:.5rem} .pb-4{padding-bottom:1rem} .pb-10{padding-bottom:2.5rem} .pb-24{padding-bottom:6rem}
+  .pl-1{padding-left:.25rem}
+  .mt-0\.5{margin-top:.125rem} .mt-1{margin-top:.25rem} .mt-2{margin-top:.5rem} .mt-3{margin-top:.75rem}
+  .mb-1\.5{margin-bottom:.375rem} .mb-2{margin-bottom:.5rem} .mb-3{margin-bottom:.75rem} .mb-4{margin-bottom:1rem} .mb-5{margin-bottom:1.25rem}
+  .my-1{margin-top:.25rem;margin-bottom:.25rem}
+  .text-center{text-align:center} .text-left{text-align:left} .text-right{text-align:right}
+  .text-xs{font-size:.75rem;line-height:1rem} .text-sm{font-size:.875rem;line-height:1.25rem}
+  .text-base{font-size:1rem;line-height:1.5rem} .text-lg{font-size:1.125rem;line-height:1.75rem}
+  .text-xl{font-size:1.25rem;line-height:1.75rem} .text-2xl{font-size:1.5rem;line-height:2rem}
+  .text-3xl{font-size:1.875rem;line-height:2.25rem} .text-4xl{font-size:2.25rem;line-height:2.5rem} .text-5xl{font-size:3rem;line-height:1}
+  .font-light{font-weight:300} .font-medium{font-weight:500} .font-semibold{font-weight:600} .font-bold{font-weight:700} .font-black{font-weight:900}
+  .font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .uppercase{text-transform:uppercase} .italic{font-style:italic}
+  .leading-none{line-height:1} .leading-tight{line-height:1.25}
+  .tracking-wide{letter-spacing:.025em} .tracking-wider{letter-spacing:.05em} .tracking-widest{letter-spacing:.1em} .tracking-tight{letter-spacing:-.025em}
+  .select-none{user-select:none} .transition-all{transition:all .2s} .block{display:block}
+  .opacity-30{opacity:.3} .opacity-40{opacity:.4}
+  .text-white{color:#fff} .text-gray-200{color:#e5e7eb} .text-gray-300{color:#d1d5db} .text-gray-500{color:#6b7280} .text-gray-600{color:#4b5563}
+  .text-red-400{color:#f87171} .text-orange-400{color:#fb923c} .text-purple-400{color:#c084fc} .text-blue-300{color:#93c5fd}
+  .bg-blue-700{background-color:#1d4ed8} .bg-amber-700{background-color:#b45309} .bg-orange-700{background-color:#c2410c} .bg-red-800{background-color:#991b1b}
+  .hover\:text-red-400:hover{color:#f87171}
+  button{border:none;cursor:pointer;font-family:inherit}
+  input,textarea{font-family:inherit}
+
+  /* ── Theme (Life University — Pantone 375 C lime green + gold) ── */
+  .t-bg      { background-color:#06140A; }
+  .t-surface { background-color:#0A2213; }
+  .t-card    { background-color:#0E2F19; }
+  .t-card2   { background-color:#123B20; }
+  .t-input   { background-color:#123B20; border:1.5px solid #1F5C34; color:#fff; border-radius:1rem; padding:.75rem 1rem; font-size:1rem; outline:none; transition:border-color .2s; }
+  .t-input:focus { border-color:#97D700; }
+  .t-input-sm { background-color:#123B20; border:1.5px solid #1F5C34; color:#fff; border-radius:.5rem; padding:.35rem .4rem; font-size:.85rem; outline:none; text-align:center; }
+  .t-input-sm:focus { border-color:#97D700; }
+  .t-green-btn { background-color:#4C7A00; }
+  .t-green-text { color:#97D700; }
+  .t-gold    { color:#FFB500; }
+  .t-bip-active { background:linear-gradient(135deg,#1F5C1A,#97D700); }
+  .t-bip-rest   { background:linear-gradient(135deg,#991B1B,#DC2626); }
+  .t-start-btn  { background:linear-gradient(135deg,#1F5C1A,#97D700); }
+  .t-work-bar   { background-color:#5B9C1F; }
+  .t-amber-pill { background:rgba(255,181,0,.12); border:1px solid rgba(255,181,0,.3); }
+  .t-note { background:transparent; color:#ccc; border:none; outline:none; resize:none; width:100%; font-family:inherit; font-size:.8rem; line-height:1.4; }
+  .t-note::placeholder { color:#2F6B3B; }
+  input[type=number]::-webkit-inner-spin-button { opacity:.4; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+const fmt = (ms) => { if(!ms||ms<0)ms=0; const s=Math.floor(ms/1000); return `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`; };
+const toTOD = (ts) => { const d=new Date(ts); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}.${String(d.getMilliseconds()).padStart(3,"0")}`; };
+const toRelSecs = (ts,o) => ((ts-o)/1000).toFixed(3);
+const makeInterval = (start) => ({start,end:null,phases:0,skillErrors:0,discErrors:0});
+const makeDrill = (name,target=65) => ({name,target,note:"",startTime:null,endTime:null,bipIntervals:[],started:false,ended:false});
+const bipLive = (d) => d.bipIntervals.length>0&&d.bipIntervals[d.bipIntervals.length-1].end===null;
+const calcStats = (d,now) => {
+  if(!d?.started) return {elapsed:0,work:0,rest:0,wPct:0,rPct:0,bouts:0};
+  const end=d.ended?d.endTime:now, elapsed=end-d.startTime;
+  let work=0; for(const iv of d.bipIntervals) work+=(iv.end??now)-iv.start;
+  work=Math.min(work,elapsed); const rest=Math.max(0,elapsed-work);
+  return {elapsed,work,rest,wPct:elapsed>0?(work/elapsed)*100:0,rPct:elapsed>0?(rest/elapsed)*100:0,bouts:d.bipIntervals.length};
+};
+const drillCounts = (d) => d.bipIntervals.reduce(
+  (acc,iv)=>({phases:acc.phases+(iv.phases||0),skillErrors:acc.skillErrors+(iv.skillErrors||0),discErrors:acc.discErrors+(iv.discErrors||0)}),
+  {phases:0,skillErrors:0,discErrors:0}
+);
+const bipColor = (wPct,target) => { if(wPct>=target) return "t-green-text"; if(wPct>=target-10) return "t-gold"; return "text-red-400"; };
+const targetIcon = (wPct,target) => { if(wPct>=target) return "✅"; if(wPct>=target-10) return "⚠️"; return "🔴"; };
+const BUCKET_LABELS = ["<30s","30–60s","60–90s","90–120s","120s+"];
+const getBuckets = (ivs) => { const b=[0,0,0,0,0]; for(const iv of ivs){if(!iv.end)continue;const s=(iv.end-iv.start)/1000;if(s<30)b[0]++;else if(s<60)b[1]++;else if(s<90)b[2]++;else if(s<120)b[3]++;else b[4]++;} return b; };
+const addBuckets = (a,b) => a.map((v,i)=>v+b[i]);
+const interDrillRest = (drills,i) => i>0&&drills[i-1].endTime&&drills[i].startTime?drills[i].startTime-drills[i-1].endTime:null;
+
+// ── Storage (localStorage — works on any static host) ─────────────────────────
+const saveTemplate = (sessionName,bipTargetMin,drillDefs) => {
+  try {
+    const raw=localStorage.getItem("bip-templates");
+    const list=raw?JSON.parse(raw):[];
+    list.unshift({date:new Date().toLocaleDateString(),name:sessionName,sessionBipTarget:bipTargetMin,drills:drillDefs});
+    if(list.length>5)list.splice(5);
+    localStorage.setItem("bip-templates",JSON.stringify(list));
+  } catch(e) {}
+};
+const fetchTemplates = () => {
+  try { const raw=localStorage.getItem("bip-templates"); return raw?JSON.parse(raw):[]; } catch(e){ return []; }
+};
+
+// ── Shared Components ─────────────────────────────────────────────────────────
+function StatBox({val,label,valColor="text-white",sub=""}) {
+  return (
+    <div className="t-card2 rounded-xl p-3 text-center">
+      <div className={`font-bold text-base font-mono ${valColor}`}>{val}</div>
+      <div className="text-xs mt-0.5" style={{color:"#6FAE7A"}}>{label}</div>
+      {sub&&<div className="text-xs mt-0.5 font-medium" style={{color:"#2F6B3B"}}>{sub}</div>}
+    </div>
+  );
+}
+function Counter({icon,label,value,onInc,onDec,valBg}) {
+  return (
+    <div className="t-card rounded-xl px-4 py-3 flex items-center justify-between">
+      <span className="text-sm font-medium text-gray-200">{icon}&nbsp;&nbsp;{label}</span>
+      <div className="flex items-center gap-2">
+        <button onClick={onDec} className="w-11 h-11 rounded-xl t-card2 text-white text-2xl font-light flex items-center justify-center select-none">−</button>
+        <div className={`w-12 h-11 rounded-xl ${valBg} flex items-center justify-center text-white font-bold text-xl select-none`}>{value}</div>
+        <button onClick={onInc} className="w-11 h-11 rounded-xl t-card2 text-white text-2xl font-light flex items-center justify-center select-none">+</button>
+      </div>
+    </div>
+  );
+}
+function LifeUWordmark({compact=false}) {
+  return compact ? (
+    <div className="flex items-center gap-2 select-none">
+      <div className="rounded-lg flex items-center justify-center font-black text-sm" style={{width:"2rem",height:"2rem",background:"linear-gradient(135deg,#1F5C1A,#97D700)",color:"#06140A"}}>LU</div>
+    </div>
+  ) : (
+    <div className="flex flex-col items-center pt-8 pb-4">
+      <div className="rounded-2xl flex items-center justify-center font-black text-3xl" style={{width:"90px",height:"90px",background:"linear-gradient(135deg,#1F5C1A,#97D700)",color:"#06140A",boxShadow:"0 0 18px rgba(151,215,0,.35)"}}>LU</div>
+      <h1 className="text-2xl font-bold tracking-tight text-white mt-3">BIP Tracker</h1>
+      <p className="text-sm mt-0.5" style={{color:"#6FAE7A"}}>Life University · Running Eagles · Session Monitor</p>
+    </div>
+  );
+}
+
+// ── Setup Screen ──────────────────────────────────────────────────────────────
+function SetupScreen({onStart}) {
+  const [sName,setSName] = useState("");
+  const [sessionBipTarget,setSessionBipTarget] = useState(25);
+  const [dDefs,setDDefs] = useState([{name:"",target:65}]);
+  const [templates,setTemplates] = useState([]);
+  const [showTemplates,setShowTemplates] = useState(false);
+  const canGo = sName.trim()&&dDefs.some(d=>d.name.trim());
+  useEffect(()=>{ setTemplates(fetchTemplates()); },[]);
+  const updateDrill = (i,key,val) => setDDefs(prev=>prev.map((d,j)=>j===i?{...d,[key]:val}:d));
+  const loadTemplate = (t) => {
+    setDDefs(t.drills.map(d=>({name:d.name,target:d.target||65})));
+    if(t.sessionBipTarget!==undefined) setSessionBipTarget(t.sessionBipTarget);
+    setShowTemplates(false);
+  };
+  return (
+    <div className="t-bg min-h-screen text-white px-5 pb-10">
+      <LifeUWordmark/>
+
+      <label className="text-xs font-semibold uppercase tracking-widest" style={{color:"#6FAE7A"}}>Session Name</label>
+      <input value={sName} onChange={e=>setSName(e.target.value)} placeholder="e.g. Pre-season W3 – Tuesday AM" className="t-input block w-full mt-2 mb-4"/>
+
+      <div className="t-card rounded-2xl px-4 py-3 mb-5 flex items-center justify-between" style={{border:"1px solid #1F5C34"}}>
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-widest" style={{color:"#6FAE7A"}}>🎯 Session BIP Target</div>
+          <div className="text-xs mt-0.5" style={{color:"#2F6B3B"}}>Total ball in play time goal for the session</div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <input type="number" value={sessionBipTarget} min="0" max="999"
+            onChange={e=>setSessionBipTarget(Math.max(0,parseInt(e.target.value)||0))}
+            className="t-input-sm" style={{width:"4.5rem",fontSize:"1.1rem",padding:".4rem .5rem"}}/>
+          <span className="text-sm" style={{color:"#6FAE7A"}}>min</span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-xs font-semibold uppercase tracking-widest" style={{color:"#6FAE7A"}}>Drills <span style={{color:"#1F5C34"}}>· 🎯 = BIP% target</span></label>
+        <button onClick={()=>setDDefs(d=>[...d,{name:"",target:65}])} className="text-sm font-semibold t-green-text">+ Add</button>
+      </div>
+      <div className="space-y-2 mb-4">
+        {dDefs.map((d,i)=>(
+          <div key={i} className="flex items-center gap-2">
+            <span className="text-sm font-mono w-5 text-right shrink-0" style={{color:"#6FAE7A"}}>{i+1}</span>
+            <input value={d.name} onChange={e=>updateDrill(i,"name",e.target.value)} placeholder={`Drill ${i+1} name`} className="t-input flex-1" style={{padding:".6rem .9rem"}}/>
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="text-sm">🎯</span>
+              <input type="number" value={d.target} min="0" max="100" onChange={e=>updateDrill(i,"target",Math.min(100,Math.max(0,parseInt(e.target.value)||0)))} className="t-input-sm" style={{width:"3.2rem"}}/>
+              <span className="text-xs" style={{color:"#6FAE7A"}}>%</span>
+            </div>
+            {dDefs.length>1&&<button onClick={()=>setDDefs(prev=>prev.filter((_,j)=>j!==i))} className="text-lg px-1 text-gray-600 hover:text-red-400">✕</button>}
+          </div>
+        ))}
+      </div>
+
+      {templates.length>0&&(
+        <div className="mb-5">
+          <button onClick={()=>setShowTemplates(s=>!s)} className="text-xs font-semibold uppercase tracking-widest flex items-center gap-1" style={{color:"#6FAE7A"}}>
+            📋 Load Recent {showTemplates?"▲":"▼"}
+          </button>
+          {showTemplates&&(
+            <div className="mt-2 space-y-1">
+              {templates.map((t,i)=>(
+                <button key={i} onClick={()=>loadTemplate(t)} className="w-full t-card rounded-xl px-4 py-3 text-left flex items-center justify-between" style={{border:"1px solid #1F5C34"}}>
+                  <div>
+                    <div className="text-sm font-medium text-white">{t.name}</div>
+                    <div className="text-xs mt-0.5" style={{color:"#6FAE7A"}}>
+                      {t.drills.length} drills · {t.sessionBipTarget>0?`🎯 ${t.sessionBipTarget}min BIP · `:""}{t.date}
+                    </div>
+                  </div>
+                  <span className="t-green-text text-sm">Load →</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <button onClick={()=>canGo&&onStart(sName.trim(),dDefs.filter(d=>d.name.trim()),sessionBipTarget)} disabled={!canGo}
+        className={`w-full py-4 rounded-2xl text-lg font-bold text-white ${canGo?"t-start-btn":"opacity-40"}`} style={canGo?{}:{backgroundColor:"#0E2F19"}}>
+        Start Session →
+      </button>
+    </div>
+  );
+}
+
+// ── Active Screen ─────────────────────────────────────────────────────────────
+function ActiveScreen({drills,idx,sessionName,sessionStart,sessionBipTarget,handlers}) {
+  const [now,setNow] = useState(Date.now());
+  useEffect(()=>{const id=setInterval(()=>setNow(Date.now()),200); return ()=>clearInterval(id);},[]);
+  const {onStartDrill,onToggle,onUndo,onInc,onDec,onEndDrill,onNoteChange} = handlers;
+  const d=drills[idx], stats=calcStats(d,now), live=bipLive(d), counts=drillCounts(d);
+  const bColor = d.started?bipColor(stats.wPct,d.target):"t-green-text";
+
+  const totalSessionBip = drills.reduce((acc,dr)=>acc+calcStats(dr,now).work, 0);
+  const bipTargetMs = sessionBipTarget * 60000;
+  const bipProgress = bipTargetMs>0 ? Math.min(100, totalSessionBip/bipTargetMs*100) : 0;
+  const bipMet = bipTargetMs>0 && totalSessionBip>=bipTargetMs;
+  const bipShort = bipTargetMs>0 ? Math.max(0,bipTargetMs-totalSessionBip) : 0;
+
+  let iLabel="",iMs=0;
+  if(d.started){
+    if(live){iLabel="BALL IN PLAY";iMs=now-d.bipIntervals[d.bipIntervals.length-1].start;}
+    else if(d.bipIntervals.length){iLabel="REST";iMs=now-d.bipIntervals[d.bipIntervals.length-1].end;}
+    else{iLabel="REST";iMs=now-d.startTime;}
+  }
+  const prevDrill=idx>0?drills[idx-1]:null;
+  const interRest=prevDrill?.endTime?now-prevDrill.endTime:null;
+
+  return (
+    <div className="t-bg min-h-screen text-white max-w-lg mx-auto flex flex-col">
+      <div className="t-surface px-4 py-3 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <LifeUWordmark compact/>
+          <div>
+            <div className="text-xs" style={{color:"#6FAE7A"}}>{sessionName}</div>
+            <div className="font-bold text-sm mt-0.5">Drill {idx+1}/{drills.length}: <span style={{color:"#97D700"}}>{d.name}</span></div>
+          </div>
+        </div>
+        <div className="flex items-start gap-4">
+          <div className="text-right">
+            <div className="text-xs" style={{color:"#6FAE7A"}}>Drill</div>
+            <div className="font-mono font-bold text-xl leading-tight t-gold">{d.started?fmt(now-d.startTime):"00:00"}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-xs" style={{color:"#6FAE7A"}}>Session</div>
+            <div className="font-mono font-bold text-sm t-green-text">{fmt(now-sessionStart)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="t-card px-4 py-2.5 shrink-0" style={{borderBottom:"1px solid #1F5C34"}}>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs font-semibold uppercase tracking-wider" style={{color:"#6FAE7A"}}>Session Ball in Play</span>
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className={bipMet?"t-green-text":"text-white"} style={{fontSize:".95rem",fontWeight:"700"}}>{fmt(totalSessionBip)}</span>
+            {bipTargetMs>0&&(
+              <span style={{color:"#2F6B3B"}}>
+                / 🎯 {fmt(bipTargetMs)}&nbsp;
+                {bipMet ? <span className="t-green-text font-bold">✅</span> : <span style={{color:"#6FAE7A"}}>({fmt(bipShort)} to go)</span>}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="h-2 rounded-full overflow-hidden" style={{backgroundColor:"#1F5C34"}}>
+          <div className="h-full rounded-full transition-all"
+            style={{
+              width: bipTargetMs>0 ? `${bipProgress}%` : "100%",
+              backgroundColor: bipMet ? "#97D700" : "#4C7A00",
+              opacity: bipTargetMs>0 ? 1 : 0.3
+            }}/>
+        </div>
+      </div>
+
+      <div className="flex-1 p-4 space-y-3 pb-24">
+        {!d.started ? (
+          <div className="space-y-3">
+            {interRest!==null&&(
+              <div className="t-card rounded-2xl p-5 text-center" style={{border:"1px solid rgba(255,181,0,.2)"}}>
+                <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{color:"rgba(255,181,0,.7)"}}>Inter-drill Rest</div>
+                <div className="font-mono font-bold text-5xl leading-none t-gold">{fmt(interRest)}</div>
+                <div className="text-xs mt-2" style={{color:"#6FAE7A"}}>since end of {prevDrill.name}</div>
+              </div>
+            )}
+            <button onClick={onStartDrill} className="t-start-btn w-full rounded-2xl flex flex-col items-center justify-center py-10 gap-2 select-none">
+              <span className="text-white text-4xl">▶</span>
+              <span className="text-white font-bold text-2xl tracking-wide">START DRILL</span>
+              <span className="text-xs mt-1 font-medium" style={{color:"rgba(255,255,255,.55)"}}>🎯 BIP target: {d.target}% · Ball in play starts automatically</span>
+            </button>
+          </div>
+        ) : (
+          <button onClick={onToggle} className={`w-full rounded-2xl flex flex-col items-center justify-center py-6 gap-1 select-none ${live?"t-bip-active":"t-bip-rest"}`}>
+            <span className="text-xs tracking-widest uppercase" style={{color:"rgba(255,255,255,.7)"}}>{iLabel}</span>
+            <span className="text-white text-5xl font-mono font-bold leading-none my-1">{fmt(iMs)}</span>
+            <span className="text-xs" style={{color:"rgba(255,255,255,.55)"}}>{live?"● tap to stop":"○ tap when ball in play"}</span>
+          </button>
+        )}
+
+        <div className="grid grid-cols-3 gap-2">
+          <StatBox val={fmt(stats.work)} label={`BIP · 🎯${d.target}%`} valColor={bColor} sub={d.started?`${stats.wPct.toFixed(0)}% ${targetIcon(stats.wPct,d.target)}`:""}/>
+          <StatBox val={fmt(stats.rest)} label={`Rest (${stats.rPct.toFixed(0)}%)`} valColor="text-red-400"/>
+          <StatBox val={stats.bouts} label="Bouts" valColor="text-blue-300"/>
+        </div>
+
+        {stats.elapsed>0&&(
+          <div className="h-2 rounded-full overflow-hidden" style={{backgroundColor:"#123B20"}}>
+            <div className="t-work-bar h-full rounded-full transition-all" style={{width:`${Math.min(stats.wPct,100)}%`}}/>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Counter icon="🔄" label="Phases" value={counts.phases} onInc={()=>onInc("phases")} onDec={()=>onDec("phases")} valBg="bg-amber-700"/>
+          <Counter icon="⚠️" label="Skill Errors" value={counts.skillErrors} onInc={()=>onInc("skillErrors")} onDec={()=>onDec("skillErrors")} valBg="bg-orange-700"/>
+          <Counter icon="🟥" label="Discipline" value={counts.discErrors} onInc={()=>onInc("discErrors")} onDec={()=>onDec("discErrors")} valBg="bg-red-800"/>
+        </div>
+        {d.bipIntervals.length>0&&<p className="text-xs text-center" style={{color:"#2F6B3B"}}>Counts attributed to current / last BIP bout</p>}
+
+        <div className="t-card rounded-xl px-3 pt-2 pb-2" style={{border:"1px solid #1F5C34"}}>
+          <div className="text-xs mb-1.5 font-semibold" style={{color:"#6FAE7A"}}>📝 Drill notes</div>
+          <textarea value={d.note||""} onChange={e=>onNoteChange(e.target.value)} placeholder="Observations, stoppages, coaching points..." rows={2} className="t-note"/>
+        </div>
+
+        {idx>0&&(
+          <div className="t-card rounded-2xl p-3">
+            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{color:"#6FAE7A"}}>Completed Drills</div>
+            {drills.slice(0,idx).map((pd,i)=>{
+              const ps=calcStats(pd,now), ir=interDrillRest(drills,i+1);
+              const col=pd.started?bipColor(ps.wPct,pd.target):"t-green-text";
+              return (
+                <div key={i} className="py-1.5" style={{borderBottom:"1px solid #1F5C34"}}>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-300">{i+1}. {pd.name}</span>
+                    <span className="text-xs font-mono"><span className={col}>{ps.wPct.toFixed(0)}% BIP</span><span style={{color:"#2F6B3B"}}> / 🎯{pd.target}%</span></span>
+                  </div>
+                  {ir!==null&&i<idx-1&&<div className="text-xs mt-0.5 pl-1 t-gold" style={{opacity:.65}}>⏸ {fmt(ir)} inter-drill rest</div>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="t-surface px-4 py-3 flex gap-2 shrink-0" style={{borderTop:"1px solid #1F5C34"}}>
+        <button onClick={onUndo} disabled={!d.bipIntervals.length}
+          className={`px-4 py-3 rounded-xl text-sm font-semibold shrink-0 ${d.bipIntervals.length?"t-card2 text-white":"opacity-30 t-card text-gray-500"}`}>↩ Undo</button>
+        <button onClick={onEndDrill} disabled={!d.started}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm text-white ${d.started?"bg-blue-700":"opacity-30 t-card"}`}>
+          {idx<drills.length-1?`End Drill → ${drills[idx+1]?.name}`:"✓ Finish Session"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Summary Screen ────────────────────────────────────────────────────────────
+function SummaryScreen({sessionName,sessionBipTarget,drills,onExportPDF,onExportCSV,onExportXML}) {
+  const now=Date.now(), allS=drills.map(d=>calcStats(d,now));
+  const tW=allS.reduce((a,s)=>a+s.work,0), tR=allS.reduce((a,s)=>a+s.rest,0), tEl=tW+tR;
+  const tBo=allS.reduce((a,s)=>a+s.bouts,0), allC=drills.map(drillCounts);
+  const tPh=allC.reduce((a,c)=>a+c.phases,0), tSk=allC.reduce((a,c)=>a+c.skillErrors,0), tDi=allC.reduce((a,c)=>a+c.discErrors,0);
+  const sessionBuckets=drills.reduce((acc,d)=>addBuckets(acc,getBuckets(d.bipIntervals)),[0,0,0,0,0]);
+  const interRests=drills.map((_,i)=>interDrillRest(drills,i)).filter(v=>v!==null);
+  const totalIR=interRests.reduce((a,v)=>a+v,0), avgIR=interRests.length>0?totalIR/interRests.length:0;
+  const bipTargetMs = sessionBipTarget*60000;
+  const bipMet = bipTargetMs>0&&tW>=bipTargetMs;
+  const bipShort = bipTargetMs>0?Math.max(0,bipTargetMs-tW):0;
+
+  return (
+    <div className="t-bg min-h-screen text-white px-4 pb-10">
+      <div className="flex items-center gap-4 pt-5 pb-4">
+        <div className="rounded-2xl flex items-center justify-center font-black text-xl shrink-0" style={{width:"56px",height:"56px",background:"linear-gradient(135deg,#1F5C1A,#97D700)",color:"#06140A"}}>LU</div>
+        <div>
+          <h1 className="text-xl font-bold">Session Complete</h1>
+          <p className="text-sm" style={{color:"#6FAE7A"}}>{sessionName} · {new Date().toLocaleDateString()}</p>
+        </div>
+      </div>
+
+      <div className="t-card rounded-2xl p-4 mb-4">
+        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{color:"#6FAE7A"}}>Session Totals</div>
+        <div className="grid grid-cols-4 gap-2">
+          <StatBox val={fmt(tEl)} label="Duration"/>
+          <StatBox
+            val={fmt(tW)}
+            label="Ball in Play"
+            valColor={bipMet?"t-green-text":tW>0?"t-green-text":"text-gray-400"}
+            sub={bipTargetMs>0 ? (bipMet ? `✅ 🎯${sessionBipTarget}min met` : `🎯${sessionBipTarget}min · ${fmt(bipShort)} short`) : ""}
+          />
+          <StatBox val={fmt(tR)} label="Rest" valColor="text-red-400"/>
+          <StatBox val={`${tEl>0?((tW/tEl)*100).toFixed(1):0}%`} label="BIP %" valColor="t-green-text"/>
+          <StatBox val={tBo} label="Bouts" valColor="text-blue-300"/>
+          <StatBox val={tBo>0?fmt(tW/tBo):"—"} label="Avg Bout" valColor="text-purple-400"/>
+          <StatBox val={tPh} label="Phases" valColor="t-gold"/>
+          <StatBox val={tSk} label="Skill Errors" valColor="text-orange-400"/>
+        </div>
+        <div className="grid grid-cols-4 gap-2 mt-2">
+          <StatBox val={tDi} label="Discipline Errors" valColor="text-red-400"/>
+          {interRests.length>0&&<>
+            <StatBox val={fmt(totalIR)} label="Total Inter-drill" valColor="t-gold"/>
+            <StatBox val={fmt(avgIR)} label="Avg Inter-drill" valColor="t-gold"/>
+          </>}
+        </div>
+        <div className="mt-3 pt-3" style={{borderTop:"1px solid #1F5C34"}}>
+          <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{color:"#6FAE7A"}}>BIP Bout Distribution</div>
+          <div className="grid grid-cols-5 gap-1">
+            {BUCKET_LABELS.map((lbl,i)=>(
+              <div key={i} className="t-card2 rounded-lg p-2 text-center">
+                <div className="text-white font-bold text-base">{sessionBuckets[i]}</div>
+                <div className="text-xs mt-0.5" style={{color:"#6FAE7A"}}>{lbl}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="t-card rounded-2xl p-4 mb-4">
+        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{color:"#6FAE7A"}}>Drill Breakdown</div>
+        <div className="space-y-1">
+          {drills.map((d,i)=>{
+            const s=allS[i], c=allC[i], bkts=getBuckets(d.bipIntervals), avgBout=s.bouts>0?fmt(s.work/s.bouts):"—";
+            const ir=interDrillRest(drills,i), col=bipColor(s.wPct,d.target);
+            return (
+              <div key={i}>
+                {ir!==null&&(
+                  <div className="flex items-center gap-2 py-2">
+                    <div className="flex-1 h-px" style={{backgroundColor:"#1F5C34"}}/>
+                    <div className="flex items-center gap-1.5 t-amber-pill rounded-full px-3 py-1">
+                      <span className="text-xs t-gold">⏸</span>
+                      <span className="font-mono text-xs font-bold t-gold">{fmt(ir)}</span>
+                      <span className="text-xs" style={{color:"rgba(255,181,0,.6)"}}>inter-drill rest</span>
+                    </div>
+                    <div className="flex-1 h-px" style={{backgroundColor:"#1F5C34"}}/>
+                  </div>
+                )}
+                <div className="t-card2 rounded-xl p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm font-semibold">{i+1}. {d.name}</div>
+                    <div className="text-xs font-bold font-mono">
+                      <span className={col}>{s.wPct.toFixed(1)}% BIP</span>
+                      <span style={{color:"#6FAE7A"}}> / 🎯{d.target}% {targetIcon(s.wPct,d.target)}</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1 text-center mb-2">
+                    <div><div className={`font-mono text-xs font-bold ${col}`}>{fmt(s.work)}</div><div className="text-xs" style={{color:"#2F6B3B"}}>BIP</div></div>
+                    <div><div className="font-mono text-xs font-bold text-red-400">{fmt(s.rest)}</div><div className="text-xs" style={{color:"#2F6B3B"}}>Rest</div></div>
+                    <div><div className="text-xs font-bold text-white">{s.wPct.toFixed(1)}%</div><div className="text-xs" style={{color:"#2F6B3B"}}>BIP %</div></div>
+                    <div><div className="text-xs font-bold text-blue-300">{s.bouts}</div><div className="text-xs" style={{color:"#2F6B3B"}}>Bouts</div></div>
+                    <div><div className="font-mono text-xs font-bold text-purple-400">{avgBout}</div><div className="text-xs" style={{color:"#2F6B3B"}}>Avg Bout</div></div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1 mb-2">
+                    {BUCKET_LABELS.map((lbl,bi)=>(
+                      <div key={bi} className="t-card rounded-lg py-1 px-0.5 text-center">
+                        <div className="text-blue-300 font-bold text-sm">{bkts[bi]}</div>
+                        <div className="text-xs leading-tight" style={{color:"#2F6B3B"}}>{lbl}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-3 text-xs">
+                    <span className="t-gold">🔄 {c.phases} phases</span>
+                    <span className="text-orange-400">⚠️ {c.skillErrors} skill</span>
+                    <span className="text-red-400">🟥 {c.discErrors} disc</span>
+                  </div>
+                  {d.note&&<div className="mt-2 text-xs italic" style={{color:"#6FAE7A",borderTop:"1px solid #1F5C34",paddingTop:"6px"}}>📝 {d.note}</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <button onClick={onExportPDF} className="bg-blue-700 text-white py-4 rounded-2xl font-bold text-base">📄 HTML Report</button>
+        <button onClick={onExportCSV} className="t-green-btn text-white py-4 rounded-2xl font-bold text-base">📊 CSV Raw Data</button>
+      </div>
+      <button onClick={onExportXML} className="w-full py-4 rounded-2xl font-bold text-base text-white" style={{backgroundColor:"#5B21B6"}}>
+        🔗 XML Export — Statsports Sonra
+      </button>
+      <p className="text-xs text-center mt-2" style={{color:"#2F6B3B"}}>SportsCode/Hudl XML · timestamps = seconds from session start · start GPS &amp; tracker simultaneously</p>
+    </div>
+  );
+}
+
+// ── Root App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [phase,setPhase] = useState("setup");
+  const [sessionName,setSessionName] = useState("");
+  const [sessionStart,setSessionStart] = useState(null);
+  const [sessionBipTarget,setSessionBipTarget] = useState(0);
+  const [drills,setDrills] = useState([]);
+  const [idx,setIdx] = useState(0);
+
+  useEffect(()=>{
+    let wl=null;
+    if(phase==="active"&&"wakeLock" in navigator){ navigator.wakeLock.request("screen").then(lock=>{wl=lock;}).catch(()=>{}); }
+    return ()=>{ if(wl) wl.release().catch(()=>{}); };
+  },[phase]);
+
+  const upd = (fn) => setDrills(prev=>prev.map((d,i)=>i===idx?fn(d):d));
+  const handleStart = (name,defs,bipTargetMin) => {
+    setSessionName(name);
+    setSessionBipTarget(bipTargetMin||0);
+    setDrills(defs.map(({name,target})=>makeDrill(name,target)));
+    setIdx(0); setSessionStart(Date.now()); setPhase("active");
+  };
+  const handleStartDrill = () => { const t=Date.now(); upd(d=>({...d,started:true,startTime:t,bipIntervals:[makeInterval(t)]})); };
+  const handleToggle = () => {
+    const t=Date.now();
+    upd(d=>{
+      if(!d.started||d.ended) return d;
+      if(bipLive(d)) return {...d,bipIntervals:d.bipIntervals.map((iv,i)=>i===d.bipIntervals.length-1?{...iv,end:t}:iv)};
+      return {...d,bipIntervals:[...d.bipIntervals,makeInterval(t)]};
+    });
+  };
+  const handleUndo = () => upd(d=>{ if(!d.bipIntervals.length)return d; if(bipLive(d))return {...d,bipIntervals:d.bipIntervals.slice(0,-1)}; return {...d,bipIntervals:d.bipIntervals.map((iv,i)=>i===d.bipIntervals.length-1?{...iv,end:null}:iv)}; });
+  const handleInc = (f) => upd(d=>{ if(!d.bipIntervals.length)return d; return {...d,bipIntervals:d.bipIntervals.map((iv,i)=>i===d.bipIntervals.length-1?{...iv,[f]:(iv[f]||0)+1}:iv)}; });
+  const handleDec = (f) => upd(d=>{ if(!d.bipIntervals.length)return d; return {...d,bipIntervals:d.bipIntervals.map((iv,i)=>i===d.bipIntervals.length-1?{...iv,[f]:Math.max(0,(iv[f]||0)-1)}:iv)}; });
+  const handleNoteChange = (note) => upd(d=>({...d,note}));
+  const handleEndDrill = () => {
+    const t=Date.now();
+    setDrills(prev=>prev.map((d,i)=>{ if(i!==idx)return d; const bipIntervals=d.bipIntervals.map((iv,j)=>j===d.bipIntervals.length-1&&!iv.end?{...iv,end:t}:iv); return {...d,ended:true,endTime:t,bipIntervals}; }));
+    if(idx<drills.length-1){ setIdx(i=>i+1); }
+    else { saveTemplate(sessionName,sessionBipTarget,drills.map(d=>({name:d.name,target:d.target}))); setPhase("summary"); }
+  };
+
+  const exportCSV = () => {
+    const rows=[["Session","Drill #","Drill Name","BIP Target %","Session Bout","Drill Bout",
+      "Start (HH:MM:SS.mmm)","End (HH:MM:SS.mmm)","Duration (s)","Rest Before (s)",
+      "Start (session s)","End (session s)","Inter-drill Rest Before (s)",
+      "Phases","Skill Errors","Discipline Errors"]];
+    let sB=0;
+    drills.forEach((d,di)=>{
+      const ir=interDrillRest(drills,di);
+      d.bipIntervals.forEach((iv,j)=>{ if(!iv.end)return; sB++; const dur=((iv.end-iv.start)/1000).toFixed(3); const prevEnd=j===0?d.startTime:(d.bipIntervals[j-1].end??d.startTime); const restBefore=Math.max(0,(iv.start-prevEnd)/1000).toFixed(3);
+        rows.push([sessionName,di+1,d.name,d.target,sB,j+1,toTOD(iv.start),toTOD(iv.end),dur,restBefore,toRelSecs(iv.start,sessionStart),toRelSecs(iv.end,sessionStart),j===0&&ir!==null?(ir/1000).toFixed(3):"",iv.phases||0,iv.skillErrors||0,iv.discErrors||0]);
+      });
+    });
+    const csv=rows.map(r=>r.map(c=>`"${c??""}"`).join(",")).join("\n");
+    const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(new Blob([csv],{type:"text/csv"})),download:`${sessionName.replace(/\s+/g,"_")}_BIP_raw_${new Date().toISOString().slice(0,10)}.csv`});
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+  };
+
+  const exportXML = () => {
+    const lines=[`<?xml version="1.0" encoding="UTF-8"?>`,`<file>`,`  <ALL_INSTANCES>`]; let id=1;
+    drills.forEach(d=>d.bipIntervals.forEach(iv=>{ if(!iv.end)return; lines.push(`    <instance>`,`      <ID>${id++}</ID>`,`      <start>${((iv.start-sessionStart)/1000).toFixed(6)}</start>`,`      <end>${((iv.end-sessionStart)/1000).toFixed(6)}</end>`,`      <code>Ball in Play</code>`,`      <label><group>Drill</group><text>${d.name}</text></label>`,`    </instance>`); }));
+    lines.push(`  </ALL_INSTANCES>`,`  <SORT_INFO><sort_type>sort order</sort_type></SORT_INFO>`,`  <ROWS><row><sort_order>0</sort_order><code>Ball in Play</code><R>151</R><G>215</G><B>0</B></row></ROWS>`,`</file>`);
+    const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(new Blob([lines.join("\n")],{type:"application/xml"})),download:`${sessionName.replace(/\s+/g,"_")}_BIP_${new Date().toISOString().slice(0,10)}.xml`});
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+  };
+
+  const exportPDF = () => {
+    const now=Date.now(), allS=drills.map(d=>calcStats(d,now)), allC=drills.map(drillCounts);
+    const tW=allS.reduce((a,s)=>a+s.work,0), tR=allS.reduce((a,s)=>a+s.rest,0), tEl=tW+tR;
+    const tBo=allS.reduce((a,s)=>a+s.bouts,0), tPh=allC.reduce((a,c)=>a+c.phases,0), tSk=allC.reduce((a,c)=>a+c.skillErrors,0), tDi=allC.reduce((a,c)=>a+c.discErrors,0);
+    const sessionBkts=drills.reduce((acc,d)=>addBuckets(acc,getBuckets(d.bipIntervals)),[0,0,0,0,0]);
+    const interRests=drills.map((_,i)=>interDrillRest(drills,i)).filter(v=>v!==null);
+    const totalIR=interRests.reduce((a,v)=>a+v,0), avgIR=interRests.length>0?totalIR/interRests.length:0;
+    const bipTargetMs=sessionBipTarget*60000, bipMet=bipTargetMs>0&&tW>=bipTargetMs;
+    const drillRows=drills.map((d,i)=>{ const s=allS[i],c=allC[i],avg=s.bouts>0?fmt(s.work/s.bouts):"—",ir=interDrillRest(drills,i); const hit=s.wPct>=d.target,close=s.wPct>=d.target-10,tStyle=hit?"color:#4C7A00":close?"color:#B8860B":"color:#dc2626"; const irRow=ir?`<tr style="background:#f6ffe6"><td colspan="12" style="text-align:center;color:#8a6d00;font-size:11px;padding:6px;font-weight:600">⏸ &nbsp;Inter-drill rest: ${fmt(ir)}</td></tr>`:""; const noteRow=d.note?`<tr><td colspan="12" style="color:#6b7280;font-style:italic;font-size:11px;padding:4px 10px 8px">📝 ${d.note}</td></tr>`:""; return `${irRow}<tr><td>${i+1}</td><td><b>${d.name}</b></td><td>${fmt(s.elapsed)}</td><td style="color:#4C7A00;font-weight:700">${fmt(s.work)}</td><td style="color:#dc2626">${fmt(s.rest)}</td><td><b style="${tStyle}">${s.wPct.toFixed(1)}%</b></td><td style="color:#6b7280">${d.target}%</td><td>${s.bouts}</td><td>${avg}</td><td style="color:#B8860B">${c.phases}</td><td style="color:#ea580c">${c.skillErrors}</td><td style="color:#dc2626">${c.discErrors}</td></tr>${noteRow}`; }).join("");
+    const bucketRows=drills.map((d,i)=>{const bkts=getBuckets(d.bipIntervals),tot=bkts.reduce((a,v)=>a+v,0);return `<tr><td><b>${i+1}. ${d.name}</b></td>${bkts.map((v,bi)=>`<td class="bc">${v}<span class="bp">${tot>0?((v/tot)*100).toFixed(0):0}%</span></td>`).join("")}<td class="bc"><b>${tot}</b></td></tr>`;}).join("");
+    const sBkT=sessionBkts.reduce((a,v)=>a+v,0), sBkRow=`<tr style="background:#f0fdea;font-weight:700"><td>SESSION TOTAL</td>${sessionBkts.map((v,bi)=>`<td class="bc">${v}<span class="bp">${sBkT>0?((v/sBkT)*100).toFixed(0):0}%</span></td>`).join("")}<td class="bc">${sBkT}</td></tr>`;
+    const irRows=drills.map((_,i)=>{const ir=interDrillRest(drills,i);return ir?`<tr><td>${i}. ${drills[i-1].name}</td><td style="text-align:center;font-weight:700;color:#8a6d00">${fmt(ir)}</td><td>${i+1}. ${drills[i].name}</td></tr>`:""}).join("");
+    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessionName} – BIP Report</title>
+<style>*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;padding:28px 32px;color:#111;max-width:1020px;margin:0 auto;font-size:13px}h1{font-size:22px;color:#0E2F19;margin:0}.sub{color:#6b7280;font-size:12px;margin-top:4px}h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4C7A00;margin:24px 0 10px;padding-bottom:5px;border-bottom:2px solid #d9f2b0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}.card{background:#f6ffe6;border:1px solid #d9f2b0;border-radius:10px;padding:14px 8px;text-align:center}.cv{font-size:19px;font-weight:700;color:#0E2F19}.cl{font-size:10px;color:#6b7280;margin-top:3px;font-weight:500}.cs{font-size:10px;color:#4C7A00;margin-top:2px;font-weight:600}table{width:100%;border-collapse:collapse;margin-bottom:4px}thead tr{background:#0E2F19}th{color:#fff;padding:9px 10px;text-align:left;font-size:11px;font-weight:600}td{padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px}tr:nth-child(even) td{background:#f8fafc}td.bc{text-align:center;font-weight:600}span.bp{display:block;color:#6b7280;font-size:10px;font-weight:400}.logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#1F5C1A,#97D700);color:#0E2F19;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;margin-bottom:8px}.footer{margin-top:24px;font-size:10px;color:#9ca3af;padding-top:10px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between}@media print{@page{margin:15mm}}</style></head><body>
+<div class="logo">LU</div>
+<h1>Ball In Play — Session Report</h1>
+<div class="sub">${sessionName} &nbsp;·&nbsp; ${new Date().toLocaleDateString("en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric"})} &nbsp;·&nbsp; ${drills.length} drills &nbsp;·&nbsp; Start: ${toTOD(sessionStart)}</div>
+<h2>Session Summary</h2>
+<div class="grid"><div class="card"><div class="cv">${fmt(tEl)}</div><div class="cl">Duration</div></div><div class="card"><div class="cv" style="color:#4C7A00">${fmt(tW)}</div><div class="cl">Ball in Play</div>${bipTargetMs>0?`<div class="cs">${bipMet?"✅ "+sessionBipTarget+"min target met":"🎯 "+sessionBipTarget+"min · "+fmt(Math.max(0,bipTargetMs-tW))+" short"}</div>`:""}</div><div class="card"><div class="cv" style="color:#dc2626">${fmt(tR)}</div><div class="cl">Rest</div></div><div class="card"><div class="cv" style="color:#4C7A00">${tEl>0?((tW/tEl)*100).toFixed(1):0}%</div><div class="cl">BIP %</div></div></div>
+<div class="grid"><div class="card"><div class="cv">${tBo}</div><div class="cl">Bouts</div></div><div class="card"><div class="cv" style="color:#7c3aed">${tBo>0?fmt(tW/tBo):"—"}</div><div class="cl">Avg Bout</div></div><div class="card"><div class="cv" style="color:#B8860B">${tPh}</div><div class="cl">Phases</div></div><div class="card"><div class="cv" style="color:#ea580c">${tSk}</div><div class="cl">Skill Errors</div></div></div>
+<div class="grid"><div class="card"><div class="cv" style="color:#dc2626">${tDi}</div><div class="cl">Discipline Errors</div></div>${interRests.length>0?`<div class="card"><div class="cv" style="color:#8a6d00">${fmt(totalIR)}</div><div class="cl">Total Inter-drill</div></div><div class="card"><div class="cv" style="color:#8a6d00">${fmt(avgIR)}</div><div class="cl">Avg Inter-drill</div></div>`:""}</div>
+<h2>Drill Breakdown</h2>
+<table><thead><tr><th>#</th><th>Drill</th><th>Elapsed</th><th>Ball in Play</th><th>Rest</th><th>BIP %</th><th>🎯 Target</th><th>Bouts</th><th>Avg Bout</th><th>Phases</th><th>Skill</th><th>Disc</th></tr></thead><tbody>${drillRows}</tbody></table>
+${irRows?`<h2>Inter-drill Rest</h2><table><thead><tr><th>After</th><th style="text-align:center">Duration</th><th>Before</th></tr></thead><tbody>${irRows}</tbody></table>`:""}
+<h2>BIP Bout Duration Distribution</h2>
+<table><thead><tr><th>Drill</th>${BUCKET_LABELS.map(l=>`<th style="text-align:center">${l}</th>`).join("")}<th style="text-align:center">Total</th></tr></thead><tbody>${bucketRows}${sBkRow}</tbody></table>
+<div class="footer"><span>Life University Running Eagles · BIP Session Tracker</span><span>${new Date().toLocaleString()}</span></div>
+</body></html>`;
+    const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(new Blob([html],{type:"text/html"})),download:`${sessionName.replace(/\s+/g,"_")}_BIP_Report_${new Date().toISOString().slice(0,10)}.html`});
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+  };
+
+  const handlers={onStartDrill:handleStartDrill,onToggle:handleToggle,onUndo:handleUndo,onInc:handleInc,onDec:handleDec,onEndDrill:handleEndDrill,onNoteChange:handleNoteChange};
+  return (
+    <>
+      {phase==="setup"   && <SetupScreen onStart={handleStart}/>}
+      {phase==="active"  && <ActiveScreen drills={drills} idx={idx} sessionName={sessionName} sessionStart={sessionStart} sessionBipTarget={sessionBipTarget} handlers={handlers}/>}
+      {phase==="summary" && <SummaryScreen sessionName={sessionName} sessionBipTarget={sessionBipTarget} drills={drills} onExportPDF={exportPDF} onExportCSV={exportCSV} onExportXML={exportXML}/>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
